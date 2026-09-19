@@ -1,13 +1,17 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
 
-app = FastAPI(title="AI Interviewer")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+from app.routers import auth, dashboard, interviews, jd, plan, reports, resume
+
+app = FastAPI(title="AI Interviewer API")
+app.include_router(auth.router)
+app.include_router(dashboard.router)
+app.include_router(resume.router)
+app.include_router(jd.router)
+app.include_router(plan.router)
+app.include_router(interviews.router)
+app.include_router(reports.router)
 
 
-@app.get("/", response_class=HTMLResponse)
-def landing(request: Request):
-    return templates.TemplateResponse(request, "landing.html")
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}

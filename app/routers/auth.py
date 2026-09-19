@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel, Field
-
+from app.db import supabase
 from app.deps import get_current_user, new_auth_client, set_auth_cookies
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -18,11 +18,14 @@ def _user_dict(user):
 @router.post("/signup")
 def signup(body: Credentials, response: Response):
     try:
-        res = new_auth_client().auth.sign_up({"email": body.email, "password": body.password})
+        supabase.auth.admin.create_user(
+            {"email": body.email, "password": body.password, "email_confirm": True}
+        )
+        res = new_auth_client().auth.sign_in_with_password(
+            {"email": body.email, "password": body.password}
+        )
     except Exception as e:
         raise HTTPException(400, getattr(e, "message", str(e)))
-    if not res.session:  # email confirmation ON ho to session nahi milta
-        return {"needs_confirmation": True}
     set_auth_cookies(response, res.session)
     return _user_dict(res.user)
 

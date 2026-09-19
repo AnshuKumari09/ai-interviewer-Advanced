@@ -1,9 +1,17 @@
 import { Route, Routes } from 'react-router-dom'
+import AppLayout from './components/AppLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 import Dashboard from './pages/Dashboard'
+import InterviewNew from './pages/InterviewNew'
+import InterviewRoom from './pages/InterviewRoom'
+import JdAnalysis from './pages/JdAnalysis'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
+import PrepPlan from './pages/PrepPlan'
+import Resume from './pages/Resume'
+import SkillGap from './pages/SkillGap'
+import ReportPage from './pages/ReportPage'
 
 export default function App() {
   return (
@@ -11,14 +19,34 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+
+        {/* full-screen interview: sidebar nahi, focus ke liye */}
         <Route
-          path="/dashboard"
+          path="/interview/:id"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <InterviewRoom />
             </ProtectedRoute>
           }
         />
+
+        {/* baaki logged-in pages: sidebar layout */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/interview/new" element={<InterviewNew />} />
+          <Route path="/resume" element={<Resume />} />
+          <Route path="/jd-analysis" element={<JdAnalysis />} />
+          <Route path="/skill-gap" element={<SkillGap />} />
+          <Route path="/prep-plan" element={<PrepPlan />} />
+          <Route path="/interviews/:id/report" element={<ReportPage />} />
+        </Route>
+
         <Route
           path="*"
           element={<div className="grid min-h-screen place-items-center text-slate-500">Coming soon</div>}
