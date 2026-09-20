@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, ChevronLeft, ChevronRight, Clock, Loader2, Video } from 'lucide-react'
+import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Clock, Loader2, Video, X } from 'lucide-react'
 import { api } from '../lib/api'
 
 const INTERVIEW_TYPES = [
@@ -7,6 +7,16 @@ const INTERVIEW_TYPES = [
   { key: 'behavioral', label: 'HR / Behavioral' },
   { key: 'both', label: 'Both' },
 ]
+
+const TYPE_LABELS = Object.fromEntries(INTERVIEW_TYPES.map((t) => [t.key, t.label]))
+
+const STATUS_STYLES = {
+  scheduled: { label: 'Pending', className: 'bg-amber-50 text-amber-600' },
+  completed: { label: 'Done', className: 'bg-emerald-50 text-emerald-600' },
+}
+
+const formatBookingDate = (isoDate) =>
+  new Date(`${isoDate}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -53,7 +63,36 @@ export default function MockInterviewScheduler() {
   const [booking, setBooking] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
 
+  const [bookings, setBookings] = useState([])
+  const [loadingBookings, setLoadingBookings] = useState(true)
+  const [bookingsError, setBookingsError] = useState('')
+  const [cancellingId, setCancellingId] = useState(null)
+
   const grid = useMemo(() => buildMonthGrid(cursor.getFullYear(), cursor.getMonth()), [cursor])
+
+  const fetchBookings = () => {
+    setLoadingBookings(true)
+    api('/mock-interviews')
+      .then((res) => setBookings(res || []))
+      .catch((e) => setBookingsError(e.message || 'Could not load your scheduled interviews.'))
+      .finally(() => setLoadingBookings(false))
+  }
+
+  useEffect(() => {
+    fetchBookings()
+  }, [])
+
+  const cancelBooking = async (id) => {
+    setCancellingId(id)
+    try {
+      await api(`/mock-interviews/${id}`, { method: 'DELETE' })
+      setBookings((prev) => prev.filter((b) => b.id !== id))
+    } catch (e) {
+      setBookingsError(e.message || 'Could not remove that interview.')
+    } finally {
+      setCancellingId(null)
+    }
+  }
 
   // Re-fetch available slots every time the selected date changes.
   useEffect(() => {
@@ -121,6 +160,7 @@ export default function MockInterviewScheduler() {
         },
       })
       setConfirmed(true)
+      fetchBookings()
     } catch (e) {
       const isMissingRoute = e.status === 404 || /not found/i.test(e.message || '')
       setSlotsError(isMissingRoute ? 'Booking isn\'t set up on the server yet.' : e.message || 'Could not book that slot.')
@@ -130,6 +170,7 @@ export default function MockInterviewScheduler() {
   }
 
   return (
+    <div className="space-y-6">
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-start justify-between">
         <div>
@@ -277,5 +318,73 @@ export default function MockInterviewScheduler() {
         </div>
       </div>
     </section>
+
+    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-1 text-lg font-bold text-slate-900">Your Scheduled Interviews</h2>
+      <p className="mb-4 text-sm text-slate-500">What you booked it for, and whether it's done.</p>
+
+      {loadingBookings && (
+        <div className="flex items-center gap-1.5 py-2 text-xs text-slate-400">
+          <Loader2 size={12} className="animate-spin" /> Loading your bookings...
+        </div>
+      )}
+
+      {!loadingBookings && bookingsError && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{bookingsError}</p>
+      )}
+
+      {!loadingBookings && !bookingsError && bookings.length === 0 && (
+        <p className="rounded-lg bg-slate-50 px-3 py-4 text-center text-xs text-slate-400">
+          No interviews scheduled yet — book one above.
+        </p>
+      )}
+
+      {!loadingBookings && bookings.length > 0 && (
+        <ul className="space-y-2">
+          {bookings.map((b) => {
+            const st = STATUS_STYLES[b.status] || { label: b.status, className: 'bg-slate-100 text-slate-500' }
+            return (
+              <li
+                key={b.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2.5"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                      b.status === 'completed' ? 'bg-emerald-50 text-emerald-500' : 'bg-indigo-50 text-indigo-500'
+                    }`}
+                  >
+                    {b.status === 'completed' ? <CheckCircle2 size={15} /> : <Clock size={15} />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-xs font-semibold text-slate-700">
+                      {TYPE_LABELS[b.interview_type] || b.interview_type}
+                    </div>
+                    <div className="truncate text-[11px] text-slate-500">
+                      {formatBookingDate(b.scheduled_date)} &middot; {b.slot}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${st.className}`}>
+                    {st.label}
+                  </span>
+                  <button
+                    onClick={() => cancelBooking(b.id)}
+                    disabled={cancellingId === b.id}
+                    aria-label="Remove interview"
+                    className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-red-500 disabled:opacity-50"
+                  >
+                    {cancellingId === b.id ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
+                  </button>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </section>
+    </div>
   )
 }

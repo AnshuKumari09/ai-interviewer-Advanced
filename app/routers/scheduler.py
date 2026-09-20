@@ -108,3 +108,24 @@ def list_bookings(user=Depends(get_current_user)):
         .execute()
         .data
     )
+
+
+@router.delete("/mock-interviews/{booking_id}")
+def cancel_booking(booking_id: str, user=Depends(get_current_user)):
+    """Soft-cancel — the row stays for audit, but list_bookings above already
+    excludes status='cancelled' so it disappears from the UI immediately.
+    Works the same whether the booking is still pending or already done."""
+    existing = (
+        supabase.table("interview_bookings")
+        .select("id")
+        .eq("id", booking_id)
+        .eq("user_id", user.id)
+        .limit(1)
+        .execute()
+        .data
+    )
+    if not existing:
+        raise HTTPException(404, "Booking not found")
+
+    supabase.table("interview_bookings").update({"status": "cancelled"}).eq("id", booking_id).execute()
+    return {"ok": True}
