@@ -72,7 +72,10 @@ export default function MockInterviewScheduler() {
       .catch((e) => {
         if (ignore) return
         setSlots([])
-        setSlotsError(e.message || 'Could not load slots for this date.')
+        // 404 just means the endpoint/slot config isn't set up yet — that's not
+        // a user-facing error, so fall back to custom-time-only silently.
+        const isMissingRoute = e.status === 404 || /not found/i.test(e.message || '')
+        if (!isMissingRoute) setSlotsError(e.message || 'Could not load slots for this date.')
       })
       .finally(() => {
         if (!ignore) setLoadingSlots(false)
@@ -119,7 +122,8 @@ export default function MockInterviewScheduler() {
       })
       setConfirmed(true)
     } catch (e) {
-      setSlotsError(e.message || 'Could not book that slot.')
+      const isMissingRoute = e.status === 404 || /not found/i.test(e.message || '')
+      setSlotsError(isMissingRoute ? 'Booking isn\'t set up on the server yet.' : e.message || 'Could not book that slot.')
     } finally {
       setBooking(false)
     }
