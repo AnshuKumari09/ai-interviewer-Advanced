@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.routers import auth, dashboard, interviews, jd, plan, profile, reports, resume
-from app.routers import questions
+from app.routers import questions,coding
 app = FastAPI(title="AI Interviewer API")
 app.include_router(auth.router)
 app.include_router(dashboard.router)
@@ -12,7 +12,7 @@ app.include_router(interviews.router)
 app.include_router(reports.router)
 app.include_router(profile.router)
 app.include_router(questions.router)
-
+app.include_router(coding.router)
 @app.get("/api/health")
 def health():
     return {"status": "ok"}

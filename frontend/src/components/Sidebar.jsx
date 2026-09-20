@@ -4,13 +4,14 @@ import { useAuth } from '../context/AuthContext'
 import { nameOf } from '../lib/utils'
 import {
   Briefcase, ClipboardList, FileText, History, LayoutDashboard, LogOut, Mic, Settings, Target,
-  BookOpen,
+  BookOpen,Code2,Lightbulb,
 } from 'lucide-react'
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/interview/new', label: 'Start Interview', icon: Mic },
   { to: '/interviews', label: 'My Interviews', icon: History },
   { to: '/question-bank', label: 'Question Bank', icon: BookOpen },
+  { to: '/coding-workspace', label: 'Coding Workspace', icon: Code2 },
   { to: '/prep-plan', label: 'Prep Plan', icon: Lightbulb },
   { to: '/jd-analysis', label: 'JD Analysis', icon: Briefcase },
   { to: '/resume', label: 'Resume Analysis', icon: FileText },

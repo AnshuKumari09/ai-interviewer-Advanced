@@ -15,7 +15,8 @@ import ReportPage from './pages/ReportPage'
 import Interviews from './pages/Interviews'
 import Progress from './pages/Progress'
 import Settings from './pages/Settings'
-
+import CodingWorkspace from './pages/CodingWorkspace'
+import CodingWorkspaceList from './pages/CodingWorkspaceList'
 import QuestionBank from './pages/QuestionBank'
    
 export default function App() {
@@ -53,7 +54,10 @@ export default function App() {
           <Route path="/interviews" element={<Interviews />} />
           <Route path="/reports" element={<Progress />} />
           <Route path="/settings" element={<Settings />} /> 
-          <Route path="/question-bank" element={<QuestionBank />} />         
+          <Route path="/question-bank" element={<QuestionBank />} />  
+          <Route path="/coding-workspace" element={<CodingWorkspaceList />} />
+          <Route path="/coding-workspace/:slug" element={<CodingWorkspace />} />       
+          {/* <Route path="/coding-workspace/:slug" element={<div className="p-10 text-3xl">CODING WORKSPACE TEST</div>} />   */}
         </Route>
 
         <Route
