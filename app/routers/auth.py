@@ -45,8 +45,18 @@ def login(body: Credentials, response: Response):
 
 @router.post("/logout")
 def logout(response: Response):
-    response.delete_cookie("access_token", path="/")
-    response.delete_cookie("refresh_token", path="/")
+    response.delete_cookie(
+        "access_token",
+        path="/",
+        samesite="none",
+        secure=True,
+    )
+    response.delete_cookie(
+        "refresh_token",
+        path="/",
+        samesite="none",
+        secure=True,
+    )
     return {"ok": True}
 
 
