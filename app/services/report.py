@@ -40,7 +40,7 @@ Rules:
 
 def transcript_text(transcript: list[dict]) -> str:
     lines = [("Interviewer" if m["role"] == "ai" else "Candidate") + ": " + m["text"] for m in transcript]
-    return "\n".join(lines)[:14000]
+    return "\n".join(lines)[:30000]
 
 
 def _norm(s: str) -> str:

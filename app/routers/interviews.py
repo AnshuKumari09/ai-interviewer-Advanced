@@ -104,7 +104,7 @@ def _process_answer(row: dict, text: str) -> dict:
 
 @router.post("")
 def start(body: StartIn, user=Depends(get_current_user)):
-    total = max(3, min(15, body.num_questions))
+    total = max(1, min(30, body.num_questions))
     jd = _latest("job_descriptions", "title,analysis", user.id)
     resume = _latest("resumes", "analysis", user.id)
     jd_a = (jd or {}).get("analysis") or {}
