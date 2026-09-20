@@ -15,6 +15,9 @@ import ReportPage from './pages/ReportPage'
 import Interviews from './pages/Interviews'
 import Progress from './pages/Progress'
 import Settings from './pages/Settings'
+
+import QuestionBank from './pages/QuestionBank'
+   
 export default function App() {
   return (
     <AuthProvider>
@@ -49,7 +52,8 @@ export default function App() {
           <Route path="/interviews/:id/report" element={<ReportPage />} />
           <Route path="/interviews" element={<Interviews />} />
           <Route path="/reports" element={<Progress />} />
-          <Route path="/settings" element={<Settings />} />          
+          <Route path="/settings" element={<Settings />} /> 
+          <Route path="/question-bank" element={<QuestionBank />} />         
         </Route>
 
         <Route
