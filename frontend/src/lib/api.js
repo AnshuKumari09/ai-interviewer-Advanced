@@ -1,4 +1,3 @@
-```js
 const API_URL = import.meta.env.VITE_API_URL || ''
 
 export async function api(path, { method = 'GET', body } = {}) {
@@ -27,4 +26,3 @@ export async function api(path, { method = 'GET', body } = {}) {
 
   return data
 }
-```
