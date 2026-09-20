@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext'
 import { api } from '../lib/api'
 import { nameOf } from '../lib/utils'
 
+import MockInterviewScheduler from '../components/MockInterviewScheduler'
+
+
 const greeting = () => {
   const h = new Date().getHours()
   return h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening'

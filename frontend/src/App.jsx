@@ -18,7 +18,7 @@ import Settings from './pages/Settings'
 import CodingWorkspace from './pages/CodingWorkspace'
 import CodingWorkspaceList from './pages/CodingWorkspaceList'
 import QuestionBank from './pages/QuestionBank'
-   
+import MockInterviewScheduler from './components/MockInterviewScheduler'
 export default function App() {
   return (
     <AuthProvider>
@@ -56,7 +56,8 @@ export default function App() {
           <Route path="/settings" element={<Settings />} /> 
           <Route path="/question-bank" element={<QuestionBank />} />  
           <Route path="/coding-workspace" element={<CodingWorkspaceList />} />
-          <Route path="/coding-workspace/:slug" element={<CodingWorkspace />} />       
+          <Route path="/coding-workspace/:slug" element={<CodingWorkspace />} />  
+          <Route path="/mock-interview" element={ <div className="mx-auto max-w-5xl"> <MockInterviewScheduler /> </div> } />     
           {/* <Route path="/coding-workspace/:slug" element={<div className="p-10 text-3xl">CODING WORKSPACE TEST</div>} />   */}
         </Route>
 
