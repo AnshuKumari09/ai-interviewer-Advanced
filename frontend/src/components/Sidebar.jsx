@@ -4,7 +4,7 @@ import {
 } from 'lucide-react'
 import Logo from './Logo'
 import { useAuth } from '../context/AuthContext'
-import { displayName } from '../lib/utils'
+import { nameOf } from '../lib/utils'
 
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -19,7 +19,7 @@ const items = [
 
 export default function Sidebar() {
   const { user, signOut } = useAuth()
-  const name = displayName(user?.email)
+  const name = nameOf(user)
 
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-slate-200 bg-white md:flex print:hidden">

@@ -8,7 +8,7 @@ export async function api(path, { method = 'GET', body } = {}) {
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    const msg = Array.isArray(data.detail) ? 'Invalid email or password (min 6 chars)' : data.detail
+        const msg = Array.isArray(data.detail) ? 'Please check the values you entered' : data.detail
     throw new Error(msg || 'Something went wrong')
   }
   return data

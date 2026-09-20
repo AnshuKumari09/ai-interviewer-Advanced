@@ -12,7 +12,8 @@ class Credentials(BaseModel):
 
 
 def _user_dict(user):
-    return {"id": user.id, "email": user.email}
+    md = user.user_metadata or {}
+    return {"id": user.id, "email": user.email, "name": md.get("full_name", "")}
 
 
 @router.post("/signup")

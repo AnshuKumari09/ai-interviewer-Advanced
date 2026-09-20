@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ClipboardList, Lightbulb, Star, Target, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../lib/api'
-import { displayName } from '../lib/utils'
+import { nameOf } from '../lib/utils'
 
 const greeting = () => {
   const h = new Date().getHours()
@@ -40,7 +40,7 @@ export default function Dashboard() {
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="text-2xl font-bold text-slate-900">
-        {greeting()}, {displayName(user?.email).split(' ')[0]}! 👋
+        {greeting()}, {nameOf(user).split(' ')[0]}! 👋
       </h1>
       <p className="mt-1 text-sm text-slate-500">Here&apos;s your interview preparation overview</p>
 

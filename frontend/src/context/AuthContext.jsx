@@ -28,9 +28,10 @@ export function AuthProvider({ children }) {
     await api('/auth/logout', { method: 'POST' })
     setUser(null)
   }
+  const refresh = () => api('/auth/me').then(setUser).catch(() => {})
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, signOut }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, signOut, refresh }}>
       {children}
     </AuthContext.Provider>
   )

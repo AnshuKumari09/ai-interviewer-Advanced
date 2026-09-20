@@ -40,3 +40,58 @@ def dashboard(user=Depends(get_current_user)):
         "skills_tracked": len(skills),
         "recent": interviews[:3],
     }
+
+@router.get("/progress")
+def progress(user=Depends(get_current_user)):
+    rows = (
+        supabase.table("interviews")
+        .select("id,title,score,created_at")
+        .eq("user_id", user.id)
+        .eq("status", "completed")
+        .order("created_at")
+        .execute()
+        .data
+    )
+    trend = [
+        {"id": r["id"], "title": r["title"], "score": r["score"], "date": r["created_at"]}
+        for r in rows
+        if r["score"] is not None
+    ][-10:]
+
+    jd = (
+        supabase.table("job_descriptions")
+        .select("analysis")
+        .eq("user_id", user.id)
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+        .data
+    )
+    skills = (jd[0]["analysis"] or {}).get("skills", []) if jd else []
+    top_skills = [
+        {"name": s["name"], "level": s["current"]}
+        for s in sorted(skills, key=lambda s: s.get("current", 0), reverse=True)
+        if s.get("current", 0) > 0
+    ][:5]
+
+    # next goal: sabse taza report ke "improvements", warna JD ke sabse bade gaps
+    reports = (
+        supabase.table("interviews")
+        .select("report")
+        .eq("user_id", user.id)
+        .order("created_at", desc=True)
+        .limit(5)
+        .execute()
+        .data
+    )
+    topics = next(((r["report"] or {}).get("improvements") for r in reports if r["report"]), None) or []
+    if not topics:
+        gaps = sorted(skills, key=lambda s: s.get("required", 0) - s.get("current", 0), reverse=True)
+        topics = [s["name"] for s in gaps if s.get("required", 0) > s.get("current", 0)]
+    topics = topics[:2]
+
+    return {
+        "trend": trend,
+        "top_skills": top_skills,
+        "next_goal": f"Improve {' and '.join(topics)}" if topics else None,
+    }

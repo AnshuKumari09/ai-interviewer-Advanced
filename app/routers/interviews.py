@@ -130,6 +130,31 @@ def start(body: StartIn, user=Depends(get_current_user)):
     return _public(row)
 
 
+def _public_list_item(row: dict) -> dict:
+    cfg = row.get("config") or {}
+
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "status": row["status"],
+        "score": row["score"],
+        "role": cfg.get("role"),
+        "total_questions": cfg.get("total_questions", 10),
+        "created_at": row["created_at"],
+    }
+
+
+@router.get("")
+def list_interviews(user=Depends(get_current_user)):
+    return (
+        supabase.table("interviews")
+        .select("id,title,status,score,created_at")
+        .eq("user_id", user.id)
+        .order("created_at", desc=True)
+        .execute()
+        .data
+    )
+
 @router.get("/{interview_id}")
 def get_interview(interview_id: str, user=Depends(get_current_user)):
     return _public(_get(interview_id, user.id))

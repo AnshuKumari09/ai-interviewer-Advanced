@@ -12,7 +12,9 @@ import PrepPlan from './pages/PrepPlan'
 import Resume from './pages/Resume'
 import SkillGap from './pages/SkillGap'
 import ReportPage from './pages/ReportPage'
-
+import Interviews from './pages/Interviews'
+import Progress from './pages/Progress'
+import Settings from './pages/Settings'
 export default function App() {
   return (
     <AuthProvider>
@@ -45,6 +47,9 @@ export default function App() {
           <Route path="/skill-gap" element={<SkillGap />} />
           <Route path="/prep-plan" element={<PrepPlan />} />
           <Route path="/interviews/:id/report" element={<ReportPage />} />
+          <Route path="/interviews" element={<Interviews />} />
+          <Route path="/reports" element={<Progress />} />
+          <Route path="/settings" element={<Settings />} />          
         </Route>
 
         <Route
