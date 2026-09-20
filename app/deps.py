@@ -15,7 +15,7 @@ def new_auth_client():
 def set_auth_cookies(response: Response, session) -> None:
     response.set_cookie(
         "access_token", session.access_token,
-        httponly=True, samesite="lax", max_age=session.expires_in, path="/",
+        httponly=True, samesite="none", secure=True, max_age=session.expires_in, path="/",
     )
     response.set_cookie(
         "refresh_token", session.refresh_token,
