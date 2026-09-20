@@ -7,8 +7,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://ai-interviewer-advanced-jgecmugqz.vercel.app",
+        "https://ai-interviewer-advanced.vercel.app",
     ],
+    allow_origin_regex=r"https://ai-interviewer-advanced-[a-z0-9]+(-[a-z0-9-]+)?\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
