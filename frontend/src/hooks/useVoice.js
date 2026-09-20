@@ -1,9 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+// function wsUrl(interviewId) {
+//   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
+//   return `${proto}://${window.location.host}/api/interviews/${interviewId}/audio` // Vite proxy se backend
+// }
+
+
+
 function wsUrl(interviewId) {
-  const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${proto}://${window.location.host}/api/interviews/${interviewId}/audio` // Vite proxy se backend
+  const apiUrl =
+    import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+
+  const wsBaseUrl = apiUrl.replace(/^http/, 'ws')
+
+  return `${wsBaseUrl}/ws/interviews/${interviewId}`
 }
+
+
+
 
 // mic sample rate (48kHz aadi) -> 16 kHz PCM16. Averaging se aliasing kam hoti hai, STT ki accuracy behtar.
 function floatTo16kPCM(float32, inRate) {
